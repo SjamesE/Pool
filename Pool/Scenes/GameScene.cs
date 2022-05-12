@@ -14,7 +14,10 @@ namespace Pool.Scenes
             cueBall = new CueBall("CueBall", new Transform(new Vector2(184, 184), new Vector2(Textures.BlackBall.Size), new Vector2(0.5f, 0.5f)), Textures.WhiteBall);
 
             gameObjects.Add(cueBall);
-            //Instantiate("BlackBall", new Transform(new Vector2(384, 184), new Vector2(Textures.BlackBall.Size), new Vector2(0.5f, 0.5f)), Textures.BlackBall);
+            Instantiate("BlackBall", new Transform(new Vector2(384, 184), new Vector2(Textures.BlackBall.Size), new Vector2(0.5f, 0.5f)), Textures.BlackBall);
+            Instantiate("BlackBall", new Transform(new Vector2(384, 284), new Vector2(Textures.BlackBall.Size), new Vector2(0.5f, 0.5f)), Textures.BlackBall);
+            Instantiate("BlackBall", new Transform(new Vector2(384, 384), new Vector2(Textures.BlackBall.Size), new Vector2(0.5f, 0.5f)), Textures.BlackBall);
+            Instantiate("BlackBall", new Transform(new Vector2(384, 484), new Vector2(Textures.BlackBall.Size), new Vector2(0.5f, 0.5f)), Textures.BlackBall);
         }
 
         public void Instantiate(string name, Transform transform, Texture texture)
@@ -26,7 +29,7 @@ namespace Pool.Scenes
         {
             foreach (var item in gameObjects)
             {
-                item.Update();
+                //item.Update();
             }
             cueBall.Update();
         }

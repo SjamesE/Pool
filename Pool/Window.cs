@@ -10,8 +10,8 @@ namespace Pool
     {
         public static RenderWindow RenderWindow { get; private set; }
 
-        public static uint WINDOW_HEIGHT = 400;
-        public static uint WINDOW_WIDTH = 600;
+        public static uint WINDOW_HEIGHT = 600;
+        public static uint WINDOW_WIDTH = 800;
 
         GameScene GameScene;
         Draw Draw;

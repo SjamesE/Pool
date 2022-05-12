@@ -1,4 +1,5 @@
-﻿using SFML.System;
+﻿using Pool.Utilities;
+using SFML.System;
 
 namespace Utility
 {
@@ -36,6 +37,29 @@ namespace Utility
         {
             x = vector.X;
             y = vector.Y;
+        }
+
+        public Vector2 Normalize()
+        {
+            float len = GetLength();
+
+            if (len != 0)
+            {
+                x /= len;
+                y /= len;
+            }
+            else
+            {
+                x = 0;
+                y = 0;
+            }
+
+            return this;
+        }
+
+        public float GetLength()
+        {
+            return JMath.Pythagoras(x * x, y * y);
         }
 
         public static Vector2 operator +(Vector2 left) => left;

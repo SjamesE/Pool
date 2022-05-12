@@ -9,9 +9,9 @@ namespace Pool
         public Vector2 Size { get; set; }
         public Vector2 Scale { get; set; }
         public float Rotation { get; set; }
-        public Vector2 Velocity { get;  set; } = Vector2.zero;
+        public Vector2 Velocity { get; set; } = Vector2.zero;
 
-        private float frictionCOF = 0.985f;
+        private float frictionCOF = .9999f;
 
         public Transform(Vector2 position, Vector2 size, Vector2 scale, float rotation = 0)
         {
