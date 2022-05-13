@@ -35,7 +35,7 @@ namespace Pool
             canBeDragged = false;
 
             var deltaPos = (Vector2)Input.GetMousePos() - Center;
-            Transform.AddVelocity(deltaPos * 50);
+            Transform.AddVelocity(deltaPos * 5);
         }
 
         public new void Update()

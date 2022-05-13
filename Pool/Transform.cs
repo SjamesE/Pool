@@ -12,7 +12,7 @@ namespace Pool
         public Vector2 Velocity { get; set; } = Vector2.zero;
         public Vector2 LastPosition { get; private set; }
 
-        private float frictionCOF = 0.99985f;
+        private float frictionCOF = 0.9985f;
 
         public Transform(Vector2 position, Vector2 size, Vector2 scale, float rotation = 0)
         {
