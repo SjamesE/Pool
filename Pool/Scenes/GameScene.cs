@@ -11,13 +11,35 @@ namespace Pool.Scenes
 
         public GameScene()
         {
-            cueBall = new CueBall("CueBall", new Transform(new Vector2(184, 184), new Vector2(Textures.BlackBall.Size), new Vector2(0.5f, 0.5f)), Textures.WhiteBall);
+            cueBall = new CueBall("CueBall", new Transform(new Vector2(Window.WINDOW_WIDTH /4, Window.WINDOW_HEIGHT / 2), new Vector2(Textures.BlackBall.Size), new Vector2(0.5f, 0.5f)), Textures.WhiteBall);
 
             gameObjects.Add(cueBall);
-            Instantiate("BlackBall", new Transform(new Vector2(384, 184), new Vector2(Textures.BlackBall.Size), new Vector2(0.5f, 0.5f)), Textures.BlackBall);
-            Instantiate("BlackBall", new Transform(new Vector2(384, 284), new Vector2(Textures.BlackBall.Size), new Vector2(0.5f, 0.5f)), Textures.BlackBall);
-            Instantiate("BlackBall", new Transform(new Vector2(384, 384), new Vector2(Textures.BlackBall.Size), new Vector2(0.5f, 0.5f)), Textures.BlackBall);
-            Instantiate("BlackBall", new Transform(new Vector2(384, 484), new Vector2(Textures.BlackBall.Size), new Vector2(0.5f, 0.5f)), Textures.BlackBall);
+            Vector2 size = new Vector2(Textures.BlackBall.Size);
+            Vector2 scale = new Vector2(0.5f, 0.5f);
+            string name = "BlackBall";
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3, Window.WINDOW_HEIGHT / 2), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 16,  Window.WINDOW_HEIGHT / 2 - 16), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 16,  Window.WINDOW_HEIGHT / 2 + 16), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 32,  Window.WINDOW_HEIGHT / 2 - 32), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 32,  Window.WINDOW_HEIGHT / 2     ), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 32,  Window.WINDOW_HEIGHT / 2 + 32), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 64,  Window.WINDOW_HEIGHT / 2 - 48), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 64,  Window.WINDOW_HEIGHT / 2 + 48), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 64,  Window.WINDOW_HEIGHT / 2 - 16), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 64,  Window.WINDOW_HEIGHT / 2 + 16), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 96, Window.WINDOW_HEIGHT / 2 - 64), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 96, Window.WINDOW_HEIGHT / 2 - 32), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 96, Window.WINDOW_HEIGHT / 2     ), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 96, Window.WINDOW_HEIGHT / 2 + 32), size, scale), Textures.BlackBall);
+            Instantiate(name, new Transform(new Vector2(Window.WINDOW_WIDTH / 4 * 3 + 96, Window.WINDOW_HEIGHT / 2 + 64), size, scale), Textures.BlackBall);
+            //Instantiate(name, new Transform(new Vector2(100, 100), size, scale), Textures.BlackBall);
+            //for (int x = 50; x < 950; x += 60)
+            //{
+            //    for (int y = 0; y < 600; y += 60)
+            //    {
+            //        Instantiate(name, new Transform(new Vector2(x, y), size, scale), Textures.BlackBall);
+            //    }
+            //}
         }
 
         public void Instantiate(string name, Transform transform, Texture texture)
@@ -29,7 +51,7 @@ namespace Pool.Scenes
         {
             foreach (var item in gameObjects)
             {
-                //item.Update();
+                item.Update();
             }
             cueBall.Update();
         }

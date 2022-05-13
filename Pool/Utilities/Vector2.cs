@@ -57,9 +57,14 @@ namespace Utility
             return this;
         }
 
+        //public Vector2 UnitVector()
+        //{
+        //    float mag = GetLength();
+        //}
+
         public float GetLength()
         {
-            return JMath.Pythagoras(x * x, y * y);
+            return JMath.Pythagoras(x, y);
         }
 
         public static Vector2 operator +(Vector2 left) => left;

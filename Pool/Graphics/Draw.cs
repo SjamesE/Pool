@@ -13,8 +13,15 @@ namespace Pool.Graphics
             LineArr = new Color[Window.WINDOW_WIDTH, Window.WINDOW_HEIGHT];
         }
 
-        public void Update()
+        public static void Update()
         {
+            foreach (var gameObject in GameScene.gameObjects)
+            {
+                Draw.Line((Vector2i)(gameObject.Transform.Position + gameObject.Transform.Size * gameObject.Transform.Scale / 2),
+                          (Vector2i)(gameObject.Transform.Position + gameObject.Transform.Size * gameObject.Transform.Scale / 2 + gameObject.Transform.Velocity * App.FRAME_TIME * 5),
+                          Color.Red);
+            }
+
             Window.RenderWindow.Clear(new Color(60, 60, 60));
 
             foreach (var gameObject in GameScene.gameObjects)
@@ -29,9 +36,7 @@ namespace Pool.Graphics
 
             Window.RenderWindow.Display();
 
-            image.Dispose();
             texture.Dispose();
-            sprite.Dispose();
             LineArr = new Color[Window.WINDOW_WIDTH, Window.WINDOW_HEIGHT];
         }
 

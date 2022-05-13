@@ -11,7 +11,9 @@ namespace Pool
         public static RenderWindow RenderWindow { get; private set; }
 
         public static uint WINDOW_HEIGHT = 600;
-        public static uint WINDOW_WIDTH = 800;
+        public static uint WINDOW_WIDTH = 1000;
+
+        private bool frameByFrame = false;
 
         GameScene GameScene;
         Draw Draw;
@@ -28,8 +30,16 @@ namespace Pool
         {
             RenderWindow.DispatchEvents();
             Input.Update();
-            GameScene.Update();
-            Physics.Update();
+
+            if (Input.GetKeyState(Keyboard.Key.F1) == Input.KeyState.downFrame0)
+            {
+                frameByFrame = !frameByFrame;
+            }
+            if (!frameByFrame || (frameByFrame && Input.GetKeyState(Keyboard.Key.Enter) == Input.KeyState.downFrame0))
+            {
+                GameScene.Update();
+                Physics.Update();
+            }
 
             Draw.Update();
         }

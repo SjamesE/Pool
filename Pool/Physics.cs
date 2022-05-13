@@ -8,76 +8,140 @@ namespace Pool
 {
     public static class Physics
     {
-        private static bool flag = false;
-        private static GameObject ball1;
-        private static GameObject ball2;
+        public static void DoCollisionWithWall(Transform transform, int wall)
+        {
+            // wall: 0 left, 1 up, 2 right, 3 down
+            Vector2 currPos = transform.Position;
+            Vector2 lastPos = transform.LastPosition;
+            float point;
+
+            switch (wall)
+            {
+                case 0:
+                    point = FindPointCollisionWall(lastPos.x, currPos.x, 0) / 100;
+                    currPos = new Vector2(JMath.Lerp(lastPos.x, currPos.x, point),
+                                          JMath.Lerp(lastPos.y, currPos.y, point));
+                    transform.Velocity.x *= -1f;
+                    transform.Position = currPos + transform.Velocity * App.FRAME_TIME * (100f - point) / 100;
+                    break;
+                case 1:
+                    point = FindPointCollisionWall(lastPos.y, currPos.y, 0) / 100;
+                    currPos = new Vector2(JMath.Lerp(lastPos.x, currPos.x, point),
+                                          JMath.Lerp(lastPos.y, currPos.y, point));
+                    transform.Velocity.y *= -1f;
+                    transform.Position = currPos + transform.Velocity * App.FRAME_TIME * (100f - point) / 100;
+                    break;
+                case 2:
+                    point = FindPointCollisionWall(lastPos.x, currPos.x, Window.WINDOW_WIDTH) / 100;
+                    currPos = new Vector2(JMath.Lerp(lastPos.x, currPos.x, point),
+                                          JMath.Lerp(lastPos.y, currPos.y, point));
+                    transform.Velocity.x *= -1f;
+                    transform.Position = currPos + transform.Velocity * App.FRAME_TIME * (100f - point) / 100;
+                    break;
+                case 3:
+                    point = FindPointCollisionWall(lastPos.x, currPos.x, Window.WINDOW_HEIGHT) / 100;
+                    currPos = new Vector2(JMath.Lerp(lastPos.x, currPos.x, point),
+                                          JMath.Lerp(lastPos.y, currPos.y, point));
+                    transform.Velocity.y *= -1f;
+                    transform.Position = currPos + transform.Velocity * App.FRAME_TIME * (100f - point) / 100;
+                    break;
+            }
+        }
+
+        public static float FindPointCollisionWall(float first, float second, float wall)
+        {
+            bool a = first < second;
+            for (int i = 0; i < 101; i++)
+            {
+                float lerpedVal = JMath.Lerp(first, second, (float)i / 100);
+                if (a)
+                {
+                    if (first < wall) continue;
+                    else return i;
+                }
+                else
+                {
+                    if (first > wall) continue;
+                    else return i;
+                }
+            }
+            return -1;
+        }
 
         public static void Update()
         {
-            if (!flag)
+            // Do wall colisions
+            for (int i = 0; i < GameScene.gameObjects.Count; i++)
             {
-                for (int i = 0; i < GameScene.gameObjects.Count; i++)
-                {
-                    GameObject ball1 = GameScene.gameObjects[i];
-                    for (int j = i + 1; j < GameScene.gameObjects.Count; j++)
-                    {
-                        GameObject ball2 = GameScene.gameObjects[j];
-                        float radius = ball1.Transform.Size.x * ball1.Transform.Scale.x / 2;
+                GameObject gameObject = GameScene.gameObjects[i];
+                Transform transform = gameObject.Transform;
 
-                        if (CircleCollision(ball1.Center, ball2.Center, radius))
-                        {
-                            //flag = true;
-                            PerformCollision(ball1, ball2);
-                            Physics.ball1 = ball1;
-                            Physics.ball2 = ball2;
-                        }
-                    }
-                    if (!flag)
-                        ball1.Update();
+                //Check Colision to the left
+                if (transform.Position.x < 0)
+                {
+                    DoCollisionWithWall(gameObject.Transform, 0);
+                }
+                //Check Colision Up
+                if (transform.Position.y < 0)
+                {
+                    DoCollisionWithWall(gameObject.Transform, 1);
+                }
+                //Check Colision to the right
+                if (transform.Position.x + transform.Size.x * transform.Scale.x > Window.WINDOW_WIDTH)
+                {
+                    DoCollisionWithWall(gameObject.Transform, 2);
+                }
+                //Check Colision Down
+                if (transform.Position.y + transform.Size.y * transform.Scale.y > Window.WINDOW_HEIGHT)
+                {
+                    DoCollisionWithWall(gameObject.Transform, 3);
                 }
             }
-            else
+
+            // Do ball colisions
+            for (int i = 0; i < GameScene.gameObjects.Count; i++)
             {
-                Draw.Line((Vector2i)ball1.Center, (Vector2i)ball1.Center + (Vector2i)ball1.Transform.Velocity, Color.Green);
-                Draw.Line((Vector2i)ball2.Center, (Vector2i)ball2.Center + (Vector2i)ball2.Transform.Velocity, Color.Green);
+                GameObject ball1 = GameScene.gameObjects[i];
+                for (int j = i + 1; j < GameScene.gameObjects.Count; j++)
+                {
+                    //Console.WriteLine($"Last Pos: {ball1.Transform.LastPosition}, Curr Pos: {ball1.Transform.Position}");
+                    GameObject ball2 = GameScene.gameObjects[j];
+                    float radius = ball1.Transform.Size.x * ball1.Transform.Scale.x / 2;
+
+                    if (CircleCollision(ball1.Center, ball2.Center, radius))
+                    {
+                        int k = 0;
+                        Vector2 pos = ball1.Center;
+                        Vector2 lastPos = ball1.Transform.LastPosition + new Vector2(16, 16);
+
+                        Vector2 pos2 = ball2.Center;
+                        Vector2 lastPos2 = ball2.Transform.LastPosition + new Vector2(16, 16);
+
+                        for (k = 0; k < 51; k++)
+                        {
+                            Vector2 betweenPos = JMath.Lerp(lastPos, pos, (float)k / 50f);
+                            Vector2 betweenPos2 = JMath.Lerp(lastPos2, pos2, (float)k / 50f);
+
+                            if (CircleCollision(betweenPos, betweenPos2, radius))
+                            {
+                                ball1.Transform.Position = betweenPos - new Vector2(16, 16);
+                                ball2.Transform.Position = betweenPos2 - new Vector2(16, 16);
+                                PerformCollision(ball1, ball2);
+                                break;
+                            }
+                        }
+                        Vector2 v1 = ball1.Transform.Velocity * ((100f - (float)k) / 100f) * App.FRAME_TIME;
+                        Vector2 v2 = ball2.Transform.Velocity * ((100f - (float)k) / 100f) * App.FRAME_TIME;
+
+                        ball1.Transform.Position += v1;
+                        ball2.Transform.Position += v2;
+                    }
+                }
             }
         }
 
         private static void PerformCollision(GameObject ball1, GameObject ball2)
         {
-            #region Comment
-            /*//   A - Ball 2
-            //   |\
-            //   | \
-            // c |  \ b
-            //   |   \
-            //   |    \
-            //   |_____\
-            //  B   a   C - Ball 1
-
-            Vector2 A = ball1.Transform.Position;
-            Vector2 B = ball2.Transform.Position;
-
-            Vector2 vel1 = ball1.Transform.Velocity;
-            Vector2 vel2 = ball2.Transform.Velocity;
-
-            bool dirX = vel1.x < 0;
-            bool dirY = vel1.y < 0;
-
-            float a = B.x - A.x;
-            float b = B.y - A.y;
-            float c = JMath.Pythagoras(a, b);
-
-            float colisionAngle = JMath.ATan(b / a);
-
-            float totalVel1 = JMath.Pythagoras(ball1.Transform.Velocity.x, ball1.Transform.Velocity.y);
-
-            Vector2 v1 = new Vector2(JMath.Sin(colisionAngle) * totalVel1,
-                                     JMath.Cos(colisionAngle) * totalVel1);
-            ball1.Transform.Velocity = v1 / 90f * colisionAngle;
-            ball2.Transform.Velocity = v1 / 90f * (90f - colisionAngle);// * new Vector2(1, -1);*/
-            #endregion
-
             // get the mtd
             Vector2 delta = ball1.Transform.Position - ball2.Transform.Position;
             float radius = 16;
@@ -103,8 +167,8 @@ namespace Pool
             float im2 = 1;
 
             // push-pull them apart
-            ball1.Transform.Position += mtd;
-            ball2.Transform.Position -= mtd;
+            ball1.Transform.Position += mtd / 2;
+            ball2.Transform.Position -= mtd / 2;
 
             // impact speed
             Vector2 v = ball1.Transform.Velocity - ball2.Transform.Velocity;
@@ -121,18 +185,15 @@ namespace Pool
             // change in momentum
             ball1.Transform.Velocity += impulse * im1;
             ball2.Transform.Velocity -= impulse * im2;
-
         }
 
-        public static bool CircleCollision(Vector2 pos1, Vector2 pos2, float radius, float? radius2 = null)
+        public static bool CircleCollision(Vector2 pos1, Vector2 pos2, float radius)
         {
-            if (radius2 == null) radius2 = radius;
-
-            float w = Math.Abs(pos1.x - pos2.x);
-            float h = Math.Abs(pos1.y - pos2.y);
+            float w = pos1.x - pos2.x;
+            float h = pos1.y - pos2.y;
 
             float distance = JMath.Pythagoras(w, h);
-            float totalRadius = radius + (float)radius2;
+            float totalRadius = radius + radius;
 
             return distance < totalRadius;
         }

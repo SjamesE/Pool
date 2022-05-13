@@ -23,8 +23,8 @@ namespace Pool
             }
         }
 
-        public Vector2 Center => new Vector2(Transform.Position.x + (Texture.Size.X * Transform.Scale.x / 2),
-                                             Transform.Position.y + (Texture.Size.Y * Transform.Scale.y / 2));
+        public Vector2 Center => new Vector2(Transform.Position.x + (Transform.Size.x * Transform.Scale.x / 2),
+                                             Transform.Position.y + (Transform.Size.y * Transform.Scale.y / 2));
 
         public float Top => Transform.Position.y;
 
@@ -47,6 +47,8 @@ namespace Pool
             Name = name;
             Transform = transform;
             Texture = texture;
+
+            Transform.Size = new Vector2(Texture.Size);
         }
 
         public void Update()
