@@ -35,7 +35,7 @@ namespace Pool
             canBeDragged = false;
 
             var deltaPos = (Vector2)Input.GetMousePos() - Center;
-            Transform.AddVelocity(deltaPos * 5);
+            Transform.AddVelocity(deltaPos * 4);
         }
 
         public new void Update()
@@ -74,7 +74,7 @@ namespace Pool
 
             if (Input.GetMouseState(1) == Input.KeyState.downFrame0)
             {
-                Transform.Position = (Vector2)Input.GetMousePos() - new Vector2(16, 16);
+                Transform.Position = (Vector2)Input.GetMousePos() - new Vector2(Transform.ScaledSize.x / 2);
                 Transform.Velocity = Vector2.zero;
             }
         }

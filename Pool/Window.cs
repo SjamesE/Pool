@@ -10,8 +10,8 @@ namespace Pool
     {
         public static RenderWindow RenderWindow { get; private set; }
 
-        public static uint WINDOW_HEIGHT = 600;
-        public static uint WINDOW_WIDTH = 1000;
+        public static uint WINDOW_HEIGHT = 560;
+        public static uint WINDOW_WIDTH = 960;
 
         private bool frameByFrame = false;
 

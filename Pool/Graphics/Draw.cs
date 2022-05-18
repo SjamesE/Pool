@@ -17,12 +17,32 @@ namespace Pool.Graphics
         {
             foreach (var gameObject in GameScene.gameObjects)
             {
-                Draw.Line((Vector2i)(gameObject.Transform.Position + gameObject.Transform.Size * gameObject.Transform.Scale / 2),
-                          (Vector2i)(gameObject.Transform.Position + gameObject.Transform.Size * gameObject.Transform.Scale / 2 + gameObject.Transform.Velocity * App.FRAME_TIME * 5),
-                          Color.Red);
+                if (gameObject.Transform.Velocity.GetLength() != 0)
+                {
+                    Line((Vector2i)(gameObject.Transform.Position + gameObject.Transform.ScaledSize / 2),
+                         (Vector2i)(gameObject.Transform.Position + gameObject.Transform.ScaledSize / 2 + gameObject.Transform.Velocity * App.FRAME_TIME * 5),
+                         Color.Red);
+                }
             }
 
-            Window.RenderWindow.Clear(new Color(60, 60, 60));
+            Vector2[] a = new Vector2[6]
+            {
+                new Vector2(40, 40),
+                new Vector2(Window.WINDOW_WIDTH / 2, 40),
+                new Vector2(Window.WINDOW_WIDTH - 40, 40),
+                new Vector2(40, Window.WINDOW_HEIGHT - 40),
+                new Vector2(Window.WINDOW_WIDTH / 2, Window.WINDOW_HEIGHT - 40),
+                new Vector2(Window.WINDOW_WIDTH - 40, Window.WINDOW_HEIGHT - 40)
+            };
+            DrawTable();
+
+            foreach (var aa in a)
+            {
+                LineArr[(int)aa.x, (int)aa.y] = Color.Black;
+            }
+
+
+            Window.RenderWindow.Clear(new Color(80, 80, 80));
 
             foreach (var gameObject in GameScene.gameObjects)
             {
@@ -40,6 +60,21 @@ namespace Pool.Graphics
             LineArr = new Color[Window.WINDOW_WIDTH, Window.WINDOW_HEIGHT];
         }
 
+        private static void DrawTable()
+        {
+
+            for (int i = 0; i < Window.WINDOW_WIDTH; i++)
+            {
+                for (int j = 0; j < Window.WINDOW_HEIGHT; j++)
+                {
+                    if (i < 60 || j < 60 || i > Window.WINDOW_WIDTH - 61 || j > Window.WINDOW_HEIGHT - 61)
+                    {
+                        LineArr[i, j] = new Color(165, 42, 42);
+                    }
+                }
+            }
+        }
+
         public static void Line(Vector2i pos1, Vector2i pos2, Color color)
         {
             bool xdir = (pos1.x > pos2.x);
@@ -51,11 +86,9 @@ namespace Pool.Graphics
             w = (w <= 1) ? 1 : w;
             h = (h <= 1) ? 1 : h;
 
-            //Color[,] clrArr = new Color[w, h];
-
             bool horizontal = w > h;
             float d = (horizontal) ? (float)h / (float)w : (float)w / (float)h;
-            int l = (horizontal) ? w : h;
+            int   l = (horizontal) ? w : h;
 
             for (int i = 0; i < l; i++)
             {
@@ -82,25 +115,6 @@ namespace Pool.Graphics
                     LineArr[x, y] = color;
                 }
             }
-
-            //Image image = new Image(LineArr);
-            //if (xdir)
-            //{
-            //    image.FlipHorizontally();
-            //    pos1.x -= w;
-            //}
-            //if (ydir)
-            //{
-            //    image.FlipVertically();
-            //    pos1.y -= h;
-            //}
-            //Texture texture = new Texture((uint)w, (uint)h);
-            //texture.Update(image);
-            //
-            ////Create Sprite
-            //Sprite sprite = new Sprite(texture);
-            //sprite.Position = (SFML.System.Vector2f)pos1;
-            //vfx.Add(sprite);
         }
     }
 }

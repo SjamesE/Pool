@@ -15,6 +15,12 @@ namespace Utility
             y = 0;
         }
 
+        public Vector2i(int val)
+        {
+            x = val;
+            y = val;
+        }
+
         public Vector2i(int x, int y)
         {
             this.x = x;

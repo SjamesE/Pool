@@ -1,9 +1,8 @@
-﻿
-namespace Pool
+﻿namespace Pool
 {
     internal class App
     {
-        public static readonly int TARGET_FPS = 505;
+        public static readonly int TARGET_FPS = 60;
         public static readonly float FRAME_TIME = 1f / TARGET_FPS;
 
         Window window;

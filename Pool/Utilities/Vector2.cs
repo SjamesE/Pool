@@ -16,6 +16,12 @@ namespace Utility
             y = 0;
         }
 
+        public Vector2(float val)
+        {
+            x = val;
+            y = val;
+        }
+
         public Vector2(float x, float y)
         {
             this.x = x;

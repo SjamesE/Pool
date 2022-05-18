@@ -1,5 +1,4 @@
-﻿using Pool.Graphics;
-using Utility;
+﻿using Utility;
 
 namespace Pool
 {
@@ -8,11 +7,12 @@ namespace Pool
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
         public Vector2 Scale { get; set; }
+        public Vector2 ScaledSize => Size * Scale;
         public float Rotation { get; set; }
         public Vector2 Velocity { get; set; } = Vector2.zero;
         public Vector2 LastPosition { get; private set; }
 
-        private float frictionCOF = 0.9985f;
+        private float frictionCOF = 0.94f;
 
         public Transform(Vector2 position, Vector2 size, Vector2 scale, float rotation = 0)
         {
@@ -42,7 +42,7 @@ namespace Pool
             LastPosition = Position;
             Position += Velocity * App.FRAME_TIME;
 
-            Velocity *= frictionCOF;
+            Velocity -= Velocity * frictionCOF * App.FRAME_TIME;
 
             if (Velocity != Vector2.zero)
             {

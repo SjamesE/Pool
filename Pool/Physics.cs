@@ -1,7 +1,5 @@
-﻿using Pool.Graphics;
-using Pool.Scenes;
+﻿using Pool.Scenes;
 using Pool.Utilities;
-using SFML.Graphics;
 using Utility;
 
 namespace Pool
@@ -77,26 +75,28 @@ namespace Pool
                 Transform transform = gameObject.Transform;
 
                 //Check Colision to the left
-                if (transform.Position.x < 0)
+                if (transform.Position.x < 60)
                 {
                     DoCollisionWithWall(gameObject.Transform, 0);
                 }
                 //Check Colision Up
-                if (transform.Position.y < 0)
+                if (transform.Position.y < 60)
                 {
                     DoCollisionWithWall(gameObject.Transform, 1);
                 }
                 //Check Colision to the right
-                if (transform.Position.x + transform.Size.x * transform.Scale.x > Window.WINDOW_WIDTH)
+                if (transform.Position.x + transform.Size.x * transform.Scale.x > Window.WINDOW_WIDTH - 60)
                 {
                     DoCollisionWithWall(gameObject.Transform, 2);
                 }
                 //Check Colision Down
-                if (transform.Position.y + transform.Size.y * transform.Scale.y > Window.WINDOW_HEIGHT)
+                if (transform.Position.y + transform.Size.y * transform.Scale.y > Window.WINDOW_HEIGHT - 60)
                 {
                     DoCollisionWithWall(gameObject.Transform, 3);
                 }
             }
+
+            float radius = GameScene.gameObjects[0].Transform.ScaledSize.x / 2;
 
             // Do ball colisions
             for (int i = 0; i < GameScene.gameObjects.Count; i++)
@@ -106,16 +106,15 @@ namespace Pool
                 {
                     //Console.WriteLine($"Last Pos: {ball1.Transform.LastPosition}, Curr Pos: {ball1.Transform.Position}");
                     GameObject ball2 = GameScene.gameObjects[j];
-                    float radius = ball1.Transform.Size.x * ball1.Transform.Scale.x / 2;
 
                     if (CircleCollision(ball1.Center, ball2.Center, radius))
                     {
                         int k = 0;
                         Vector2 pos = ball1.Center;
-                        Vector2 lastPos = ball1.Transform.LastPosition + new Vector2(16, 16);
+                        Vector2 lastPos = ball1.Transform.LastPosition + new Vector2(radius);
 
                         Vector2 pos2 = ball2.Center;
-                        Vector2 lastPos2 = ball2.Transform.LastPosition + new Vector2(16, 16);
+                        Vector2 lastPos2 = ball2.Transform.LastPosition + new Vector2(radius);
 
                         for (k = 0; k < 51; k++)
                         {
@@ -124,8 +123,8 @@ namespace Pool
 
                             if (CircleCollision(betweenPos, betweenPos2, radius))
                             {
-                                ball1.Transform.Position = betweenPos - new Vector2(16, 16);
-                                ball2.Transform.Position = betweenPos2 - new Vector2(16, 16);
+                                ball1.Transform.Position = betweenPos  - new Vector2(radius);
+                                ball2.Transform.Position = betweenPos2 - new Vector2(radius);
                                 PerformCollision(ball1, ball2);
                                 break;
                             }
@@ -142,9 +141,11 @@ namespace Pool
 
         private static void PerformCollision(GameObject ball1, GameObject ball2)
         {
+            float collisionCoef = 0.95f;
+
             // get the mtd
             Vector2 delta = ball1.Transform.Position - ball2.Transform.Position;
-            float radius = 16;
+            float radius = ball1.Transform.ScaledSize.x / 2;
 
             float d = JMath.Pythagoras(delta.x, delta.y);
 
@@ -183,8 +184,8 @@ namespace Pool
             Vector2 impulse = mtd * i;
 
             // change in momentum
-            ball1.Transform.Velocity += impulse * im1;
-            ball2.Transform.Velocity -= impulse * im2;
+            ball1.Transform.Velocity += impulse * im1 * collisionCoef;
+            ball2.Transform.Velocity -= impulse * im2 * collisionCoef;
         }
 
         public static bool CircleCollision(Vector2 pos1, Vector2 pos2, float radius)
