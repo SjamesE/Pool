@@ -5,7 +5,7 @@ using Utility;
 
 namespace Pool
 {
-    internal class CueBall : GameObject
+    public class CueBall : GameObject
     {
         private bool isDragged;
 
@@ -75,6 +75,7 @@ namespace Pool
             if (Input.GetMouseState(1) == Input.KeyState.downFrame0)
             {
                 Transform.Position = (Vector2)Input.GetMousePos() - new Vector2(Transform.ScaledSize.x / 2);
+                Transform.LastPosition = Transform.Position;
                 Transform.Velocity = Vector2.zero;
             }
         }

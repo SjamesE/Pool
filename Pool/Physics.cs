@@ -77,6 +77,7 @@ namespace Pool
                 //Check Colision to the left
                 if (transform.Position.x < 60)
                 {
+                    //if (transform.Position.y > 65)
                     DoCollisionWithWall(gameObject.Transform, 0);
                 }
                 //Check Colision Up
@@ -134,6 +135,19 @@ namespace Pool
 
                         ball1.Transform.Position += v1;
                         ball2.Transform.Position += v2;
+                    }
+                }
+            }
+
+            for (int i = 0; i < GameScene.gameObjects.Count; i++)
+            {
+                GameObject go = GameScene.gameObjects[i];
+
+                foreach (var wall in GameScene.lines)
+                {
+                    if (CheckLineCircle(wall.pos1, wall.pos2, go.Transform.Position, go.Transform.ScaledSize.x / 2))
+                    {
+                        //Console.Write("Collision between " + i);
                     }
                 }
             }
@@ -197,6 +211,92 @@ namespace Pool
             float totalRadius = radius + radius;
 
             return distance < totalRadius;
+        }
+
+        // LINE/CIRCLE
+        private static bool CheckLineCircle(Vector2 v1, Vector2 v2, Vector2 circle, float r)
+        {
+
+            // is either end INSIDE the circle?
+            // if so, return true immediately
+            bool inside1 = PointCircle(v1, circle, r);
+            bool inside2 = PointCircle(v2, circle, r);
+            if (inside1 || inside2) return true;
+
+            // get length of the line
+            float distX = v1.x - v2.x;
+            float distY = v1.y - v2.y;
+            float len = (float)Math.Sqrt((distX * distX) + (distY * distY));
+
+            // get dot product of the line and circle
+            float dot = (float)((((circle.x - v1.x) * (v2.x - v1.x)) + ((circle.y - v1.y) * (v2.y - v1.y))) / Math.Pow(len, 2));
+
+            // find the closest point on the line
+            Vector2 closest = new Vector2(v1.x + (dot * (v2.x - v1.x)),
+                                          v1.y + (dot * (v2.y - v1.y)));
+
+            // is this point actually on the line segment?
+            // if so keep going, but if not, return false
+            bool onSegment = LinePoint(v1, v2, closest);
+            if (!onSegment) return false;
+
+            // get distance to closest point
+            distX = closest.x - circle.x;
+            distY = closest.x - circle.y;
+            float distance = (float)Math.Sqrt((distX * distX) + (distY * distY));
+
+            if (distance <= r)
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+        // POINT/CIRCLE
+        private static bool PointCircle(Vector2 point, Vector2 circle, float r)
+        {
+
+            // get distance between the point and circle's center
+            // using the point.ythagorean Theorem
+            float distX = point.x - circle.x;
+            float distY = point.y - circle.y;
+            float distance = (float)Math.Sqrt((distX * distX) + (distY * distY));
+
+            // if the distance is less than the circle's
+            // radius the point is inside!
+            if (distance <= r)
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+        // LINE/POINT
+        private static bool LinePoint(Vector2 v1, Vector2 v2, Vector2 point)
+        {
+
+            // get distance from the point to the two ends of the line
+            float d1 = Vector2.Distance(point, v1);
+            float d2 = Vector2.Distance(point, v2);
+
+            // get the length of the line
+            float lineLen = Vector2.Distance(v1, v2);
+
+            // since floats are so minutely accurate, add
+            // a little buffer zone that will give collision
+            float buffer = 0.1f;    // higher # = less accurate
+
+            // if the two distances are equal to the line's
+            // length, the point is on the line!
+            // note we use the buffer here to give a range,
+            // rather than one #
+            if (d1 + d2 >= lineLen - buffer && d1 + d2 <= lineLen + buffer)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

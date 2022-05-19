@@ -72,7 +72,7 @@ namespace Utility
         {
             if (right.x == 0 || right.y == 0)
             {
-                throw new System.DivideByZeroException();
+                throw new DivideByZeroException();
             }
             return new Vector2i(left.x / right.x, left.y / right.y);
         }

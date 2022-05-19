@@ -63,14 +63,14 @@ namespace Utility
             return this;
         }
 
-        //public Vector2 UnitVector()
-        //{
-        //    float mag = GetLength();
-        //}
-
         public float GetLength()
         {
             return JMath.Pythagoras(x, y);
+        }
+
+        public static float Distance(Vector2 v1, Vector2 v2)
+        {
+            return JMath.Pythagoras(v2.x - v1.x, v2.y - v2.x);
         }
 
         public static Vector2 operator +(Vector2 left) => left;
@@ -101,7 +101,7 @@ namespace Utility
         {
             if (right.x == 0 || right.y == 0)
             {
-                throw new System.DivideByZeroException();
+                throw new DivideByZeroException();
             }
             return new Vector2(left.x / right.x, left.y / right.y);
         }

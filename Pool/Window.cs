@@ -6,7 +6,7 @@ using Utility;
 
 namespace Pool
 {
-    internal class Window
+    public class Window
     {
         public static RenderWindow RenderWindow { get; private set; }
 
@@ -20,7 +20,10 @@ namespace Pool
 
         public Window()
         {
-            RenderWindow = new RenderWindow(new VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), " ", Styles.Titlebar | Styles.Close);
+            ContextSettings cs = new ContextSettings();
+            cs.AntialiasingLevel = 8;
+
+            RenderWindow = new RenderWindow(new VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), " ", Styles.Titlebar | Styles.Close, cs);
             RenderWindow.Closed += Close;
             Draw = new Draw();
             GameScene = new GameScene();

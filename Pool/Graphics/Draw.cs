@@ -4,7 +4,7 @@ using Utility;
 
 namespace Pool.Graphics
 {
-    internal class Draw
+    public class Draw
     {
         private static Color[,] LineArr;
 
@@ -25,22 +25,22 @@ namespace Pool.Graphics
                 }
             }
 
-            Vector2[] a = new Vector2[6]
+            Vector2[] holes = new Vector2[6]
             {
-                new Vector2(40, 40),
-                new Vector2(Window.WINDOW_WIDTH / 2, 40),
-                new Vector2(Window.WINDOW_WIDTH - 40, 40),
-                new Vector2(40, Window.WINDOW_HEIGHT - 40),
-                new Vector2(Window.WINDOW_WIDTH / 2, Window.WINDOW_HEIGHT - 40),
-                new Vector2(Window.WINDOW_WIDTH - 40, Window.WINDOW_HEIGHT - 40)
+                new Vector2(39, 39),
+                new Vector2(Window.WINDOW_WIDTH / 2, 39),
+                new Vector2(Window.WINDOW_WIDTH - 41, 39),
+                new Vector2(39, Window.WINDOW_HEIGHT - 41),
+                new Vector2(Window.WINDOW_WIDTH / 2, Window.WINDOW_HEIGHT - 41),
+                new Vector2(Window.WINDOW_WIDTH - 41, Window.WINDOW_HEIGHT - 41)
             };
             DrawTable();
 
-            foreach (var aa in a)
+            foreach (var line in GameScene.lines)
             {
-                LineArr[(int)aa.x, (int)aa.y] = Color.Black;
+                Line((Vector2i)line.pos1, (Vector2i)line.pos2, Color.Black);
             }
-
+            
 
             Window.RenderWindow.Clear(new Color(80, 80, 80));
 
@@ -53,6 +53,20 @@ namespace Pool.Graphics
             Texture texture = new Texture(image);
             Sprite sprite = new Sprite(texture);
             Window.RenderWindow.Draw(sprite);
+
+            CircleShape circle;
+            foreach (var hole in holes)
+            {
+                circle = new CircleShape(18);
+                circle.FillColor = new Color(10, 10, 10);
+                circle.OutlineThickness = 2;
+                circle.OutlineColor = new Color(80, 80, 80);
+                circle.Position = (SFML.System.Vector2f)hole - new SFML.System.Vector2f(17, 17);
+                //LineArr[(int)circle.Position.X, (int)circle.Position.Y] = Color.White;
+                //LineArr[(int)circle.Position.X + 34, (int)circle.Position.Y + 34] = Color.White;
+
+                Window.RenderWindow.Draw(circle);
+            }
 
             Window.RenderWindow.Display();
 

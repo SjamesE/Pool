@@ -2,7 +2,7 @@
 
 namespace Pool.Utilities
 {
-    internal static class JMath
+    public static class JMath
     {
         public static readonly float DegToRad = (float)Math.PI / 180f;
         public static readonly float RadToDeg = 180f / (float)Math.PI;

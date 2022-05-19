@@ -4,7 +4,7 @@ using Utility;
 
 namespace Pool
 {
-    internal class GameObject
+    public class GameObject
     {
         public string Name { get; set; }
         public Transform Transform { get; set; }
