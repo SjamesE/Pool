@@ -1,4 +1,5 @@
-﻿using Pool.Scenes;
+﻿using Pool.Graphics;
+using Pool.Scenes;
 using Pool.Utilities;
 using Utility;
 
@@ -69,34 +70,34 @@ namespace Pool
         public static void Update()
         {
             // Do wall colisions
-            for (int i = 0; i < GameScene.gameObjects.Count; i++)
-            {
-                GameObject gameObject = GameScene.gameObjects[i];
-                Transform transform = gameObject.Transform;
-
-                //Check Colision to the left
-                if (transform.Position.x < 60)
-                {
-                    //if (transform.Position.y > 65)
-                    DoCollisionWithWall(gameObject.Transform, 0);
-                }
-                //Check Colision Up
-                if (transform.Position.y < 60)
-                {
-                    DoCollisionWithWall(gameObject.Transform, 1);
-                }
-                //Check Colision to the right
-                if (transform.Position.x + transform.Size.x * transform.Scale.x > Window.WINDOW_WIDTH - 60)
-                {
-                    DoCollisionWithWall(gameObject.Transform, 2);
-                }
-                //Check Colision Down
-                if (transform.Position.y + transform.Size.y * transform.Scale.y > Window.WINDOW_HEIGHT - 60)
-                {
-                    DoCollisionWithWall(gameObject.Transform, 3);
-                }
-            }
-
+            //for (int i = 0; i < GameScene.gameObjects.Count; i++)
+            //{
+            //    GameObject gameObject = GameScene.gameObjects[i];
+            //    Transform transform = gameObject.Transform;
+            //
+            //    //Check Colision to the left
+            //    if (transform.Position.x < 60)
+            //    {
+            //        //if (transform.Position.y > 65)
+            //        DoCollisionWithWall(gameObject.Transform, 0);
+            //    }
+            //    //Check Colision Up
+            //    if (transform.Position.y < 60)
+            //    {
+            //        DoCollisionWithWall(gameObject.Transform, 1);
+            //    }
+            //    //Check Colision to the right
+            //    if (transform.Position.x + transform.Size.x * transform.Scale.x > Window.WINDOW_WIDTH - 60)
+            //    {
+            //        DoCollisionWithWall(gameObject.Transform, 2);
+            //    }
+            //    //Check Colision Down
+            //    if (transform.Position.y + transform.Size.y * transform.Scale.y > Window.WINDOW_HEIGHT - 60)
+            //    {
+            //        DoCollisionWithWall(gameObject.Transform, 3);
+            //    }
+            //}
+            //
             float radius = GameScene.gameObjects[0].Transform.ScaledSize.x / 2;
 
             // Do ball colisions
@@ -138,16 +139,19 @@ namespace Pool
                     }
                 }
             }
+            
 
             for (int i = 0; i < GameScene.gameObjects.Count; i++)
             {
                 GameObject go = GameScene.gameObjects[i];
 
-                foreach (var wall in GameScene.lines)
+                for (int j = 0; j < GameScene.lines.Count; j++)
                 {
+                    Line wall = GameScene.lines[j];
                     if (CheckLineCircle(wall.pos1, wall.pos2, go.Transform.Position, go.Transform.ScaledSize.x / 2))
                     {
-                        //Console.Write("Collision between " + i);
+                        PerformLineCircleCollision(go, wall);
+                        Console.WriteLine("Collision between nr. " + i + "and wall nr. " + j);
                     }
                 }
             }
@@ -202,6 +206,14 @@ namespace Pool
             ball2.Transform.Velocity -= impulse * im2 * collisionCoef;
         }
 
+        private static void PerformLineCircleCollision(GameObject ball, Line line)
+        {
+            Vector2 u = line.normal * (ball.Transform.Velocity.Dot(line.normal) / line.normal.Dot(line.normal));
+            Vector2 w = ball.Transform.Velocity - u;
+
+            ball.Transform.Velocity = w - u;
+        }
+
         public static bool CircleCollision(Vector2 pos1, Vector2 pos2, float radius)
         {
             float w = pos1.x - pos2.x;
@@ -216,6 +228,7 @@ namespace Pool
         // LINE/CIRCLE
         private static bool CheckLineCircle(Vector2 v1, Vector2 v2, Vector2 circle, float r)
         {
+            circle += new Vector2(13.5f);
 
             // is either end INSIDE the circle?
             // if so, return true immediately
@@ -242,7 +255,7 @@ namespace Pool
 
             // get distance to closest point
             distX = closest.x - circle.x;
-            distY = closest.x - circle.y;
+            distY = closest.y - circle.y;
             float distance = (float)Math.Sqrt((distX * distX) + (distY * distY));
 
             if (distance <= r)

@@ -47,7 +47,7 @@ namespace Utility
 
         public Vector2 Normalize()
         {
-            float len = GetLength();
+            float len = GetLength();// / 10;
 
             if (len != 0)
             {
@@ -63,6 +63,16 @@ namespace Utility
             return this;
         }
 
+        public static float Dot(Vector2 v1, Vector2 v2)
+        {
+            return v1.x * v2.x + v1.y * v2.y;
+        }
+
+        public float Dot(Vector2 v1)
+        {
+            return x * v1.x + y * v1.y;
+        }
+
         public float GetLength()
         {
             return JMath.Pythagoras(x, y);
@@ -70,7 +80,7 @@ namespace Utility
 
         public static float Distance(Vector2 v1, Vector2 v2)
         {
-            return JMath.Pythagoras(v2.x - v1.x, v2.y - v2.x);
+            return JMath.Pythagoras(v2.x - v1.x, v2.y - v1.y);
         }
 
         public static Vector2 operator +(Vector2 left) => left;

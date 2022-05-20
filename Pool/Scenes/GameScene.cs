@@ -45,32 +45,32 @@ namespace Pool.Scenes
                                new Vector2(Window.WINDOW_WIDTH / 2 - 35, 60)));
             lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH / 2 + 35, 60), 
                                new Vector2(Window.WINDOW_WIDTH     - 90, 60)));
-            lines.Add(new Line(new Vector2(90                          , tblH), 
-                               new Vector2(Window.WINDOW_WIDTH / 2 - 35, tblH)));
-            lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH / 2 + 35, tblH), 
-                               new Vector2(Window.WINDOW_WIDTH     - 90, tblH)));
-            lines.Add(new Line(new Vector2(60  ,                        90),
-                               new Vector2(60  , Window.WINDOW_HEIGHT - 90)));
-            lines.Add(new Line(new Vector2(tblW,                        90),
+            lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH / 2 - 35, tblH),
+                               new Vector2(90                          , tblH)));
+            lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH - 90    , tblH),
+                               new Vector2(Window.WINDOW_WIDTH / 2 + 35, tblH)));
+            lines.Add(new Line(new Vector2(60, Window.WINDOW_HEIGHT - 90),
+                               new Vector2(60, 90)));
+            lines.Add(new Line(new Vector2(tblW, 90),
                                new Vector2(tblW, Window.WINDOW_HEIGHT - 90)));
 
             lines.Add(new Line(new Vector2(60, 90), new Vector2(21, 50)));
-            lines.Add(new Line(new Vector2(90, 60), new Vector2(50, 21)));
+            lines.Add(new Line(new Vector2(50, 21), new Vector2(90, 60)));
             
-            lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH - 60, 90), new Vector2(Window.WINDOW_WIDTH - 21, 50)));
+            lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH - 21, 50), new Vector2(Window.WINDOW_WIDTH - 60, 90)));
             lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH - 90, 60), new Vector2(Window.WINDOW_WIDTH - 50, 21)));
 
-
-            lines.Add(new Line(new Vector2(60, Window.WINDOW_HEIGHT - 90), new Vector2(21, Window.WINDOW_HEIGHT - 50)));
+            lines.Add(new Line(new Vector2(21, Window.WINDOW_HEIGHT - 50), new Vector2(60, Window.WINDOW_HEIGHT - 90)));
             lines.Add(new Line(new Vector2(90, Window.WINDOW_HEIGHT - 60), new Vector2(50, Window.WINDOW_HEIGHT - 21)));
 
             lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH - 60, Window.WINDOW_HEIGHT - 90), new Vector2(Window.WINDOW_WIDTH - 21, Window.WINDOW_HEIGHT - 50)));
-            lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH - 90, Window.WINDOW_HEIGHT - 60), new Vector2(Window.WINDOW_WIDTH - 50, Window.WINDOW_HEIGHT - 21)));
+            lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH - 50, Window.WINDOW_HEIGHT - 21), new Vector2(Window.WINDOW_WIDTH - 90, Window.WINDOW_HEIGHT - 60)));
             
-            lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH / 2 - 35, 60), new Vector2(Window.WINDOW_WIDTH / 2 - 19, 43)));
-            lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH / 2 + 35, 60), new Vector2(Window.WINDOW_WIDTH / 2 + 19, 43)));
 
-            lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH / 2 - 35, Window.WINDOW_HEIGHT - 60), new Vector2(Window.WINDOW_WIDTH / 2 - 19, Window.WINDOW_HEIGHT - 43)));
+            lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH / 2 - 35, 60), new Vector2(Window.WINDOW_WIDTH / 2 - 19, 43)));
+            lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH / 2 + 19, 43), new Vector2(Window.WINDOW_WIDTH / 2 + 35, 60)));
+
+            lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH / 2 - 19, Window.WINDOW_HEIGHT - 43), new Vector2(Window.WINDOW_WIDTH / 2 - 35, Window.WINDOW_HEIGHT - 60)));
             lines.Add(new Line(new Vector2(Window.WINDOW_WIDTH / 2 + 35, Window.WINDOW_HEIGHT - 60), new Vector2(Window.WINDOW_WIDTH / 2 + 19, Window.WINDOW_HEIGHT - 43)));
         }
 

@@ -1,4 +1,5 @@
 ﻿using Pool.Scenes;
+using Pool.Utilities;
 using SFML.Graphics;
 using Utility;
 
@@ -34,15 +35,19 @@ namespace Pool.Graphics
                 new Vector2(Window.WINDOW_WIDTH / 2, Window.WINDOW_HEIGHT - 41),
                 new Vector2(Window.WINDOW_WIDTH - 41, Window.WINDOW_HEIGHT - 41)
             };
-            DrawTable();
 
             foreach (var line in GameScene.lines)
             {
                 Line((Vector2i)line.pos1, (Vector2i)line.pos2, Color.Black);
+                Vector2i middlePoint = (Vector2i)JMath.Lerp(line.pos1, line.pos2, .5f);
+                Line(middlePoint, middlePoint + (Vector2i)line.normal, Color.Red);
             }
             
 
             Window.RenderWindow.Clear(new Color(80, 80, 80));
+
+            Sprite table = new Sprite(Assets.Textures.Table);
+            Window.RenderWindow.Draw(table);
 
             foreach (var gameObject in GameScene.gameObjects)
             {
@@ -72,21 +77,6 @@ namespace Pool.Graphics
 
             texture.Dispose();
             LineArr = new Color[Window.WINDOW_WIDTH, Window.WINDOW_HEIGHT];
-        }
-
-        private static void DrawTable()
-        {
-
-            for (int i = 0; i < Window.WINDOW_WIDTH; i++)
-            {
-                for (int j = 0; j < Window.WINDOW_HEIGHT; j++)
-                {
-                    if (i < 60 || j < 60 || i > Window.WINDOW_WIDTH - 61 || j > Window.WINDOW_HEIGHT - 61)
-                    {
-                        LineArr[i, j] = new Color(165, 42, 42);
-                    }
-                }
-            }
         }
 
         public static void Line(Vector2i pos1, Vector2i pos2, Color color)

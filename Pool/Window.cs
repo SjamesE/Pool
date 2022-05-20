@@ -21,7 +21,7 @@ namespace Pool
         public Window()
         {
             ContextSettings cs = new ContextSettings();
-            cs.AntialiasingLevel = 8;
+            cs.AntialiasingLevel = 4;
 
             RenderWindow = new RenderWindow(new VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), " ", Styles.Titlebar | Styles.Close, cs);
             RenderWindow.Closed += Close;
