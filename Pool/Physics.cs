@@ -7,46 +7,6 @@ namespace Pool
 {
     public static class Physics
     {
-        public static void DoCollisionWithWall(Transform transform, int wall)
-        {
-            // wall: 0 left, 1 up, 2 right, 3 down
-            Vector2 currPos = transform.Position;
-            Vector2 lastPos = transform.LastPosition;
-            float point;
-
-            switch (wall)
-            {
-                case 0:
-                    point = FindPointCollisionWall(lastPos.x, currPos.x, 0) / 100;
-                    currPos = new Vector2(JMath.Lerp(lastPos.x, currPos.x, point),
-                                          JMath.Lerp(lastPos.y, currPos.y, point));
-                    transform.Velocity.x *= -1f;
-                    transform.Position = currPos + transform.Velocity * App.FRAME_TIME * (100f - point) / 100;
-                    break;
-                case 1:
-                    point = FindPointCollisionWall(lastPos.y, currPos.y, 0) / 100;
-                    currPos = new Vector2(JMath.Lerp(lastPos.x, currPos.x, point),
-                                          JMath.Lerp(lastPos.y, currPos.y, point));
-                    transform.Velocity.y *= -1f;
-                    transform.Position = currPos + transform.Velocity * App.FRAME_TIME * (100f - point) / 100;
-                    break;
-                case 2:
-                    point = FindPointCollisionWall(lastPos.x, currPos.x, Window.WINDOW_WIDTH) / 100;
-                    currPos = new Vector2(JMath.Lerp(lastPos.x, currPos.x, point),
-                                          JMath.Lerp(lastPos.y, currPos.y, point));
-                    transform.Velocity.x *= -1f;
-                    transform.Position = currPos + transform.Velocity * App.FRAME_TIME * (100f - point) / 100;
-                    break;
-                case 3:
-                    point = FindPointCollisionWall(lastPos.x, currPos.x, Window.WINDOW_HEIGHT) / 100;
-                    currPos = new Vector2(JMath.Lerp(lastPos.x, currPos.x, point),
-                                          JMath.Lerp(lastPos.y, currPos.y, point));
-                    transform.Velocity.y *= -1f;
-                    transform.Position = currPos + transform.Velocity * App.FRAME_TIME * (100f - point) / 100;
-                    break;
-            }
-        }
-
         public static float FindPointCollisionWall(float first, float second, float wall)
         {
             bool a = first < second;
@@ -69,35 +29,6 @@ namespace Pool
 
         public static void Update()
         {
-            // Do wall colisions
-            //for (int i = 0; i < GameScene.gameObjects.Count; i++)
-            //{
-            //    GameObject gameObject = GameScene.gameObjects[i];
-            //    Transform transform = gameObject.Transform;
-            //
-            //    //Check Colision to the left
-            //    if (transform.Position.x < 60)
-            //    {
-            //        //if (transform.Position.y > 65)
-            //        DoCollisionWithWall(gameObject.Transform, 0);
-            //    }
-            //    //Check Colision Up
-            //    if (transform.Position.y < 60)
-            //    {
-            //        DoCollisionWithWall(gameObject.Transform, 1);
-            //    }
-            //    //Check Colision to the right
-            //    if (transform.Position.x + transform.Size.x * transform.Scale.x > Window.WINDOW_WIDTH - 60)
-            //    {
-            //        DoCollisionWithWall(gameObject.Transform, 2);
-            //    }
-            //    //Check Colision Down
-            //    if (transform.Position.y + transform.Size.y * transform.Scale.y > Window.WINDOW_HEIGHT - 60)
-            //    {
-            //        DoCollisionWithWall(gameObject.Transform, 3);
-            //    }
-            //}
-            //
             float radius = GameScene.gameObjects[0].Transform.ScaledSize.x / 2;
 
             // Do ball colisions
