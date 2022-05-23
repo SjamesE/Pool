@@ -1,5 +1,4 @@
-﻿using Pool.Graphics;
-using Pool.Scenes;
+﻿using Pool.Scenes;
 using Pool.Utilities;
 using Utility;
 
@@ -7,7 +6,7 @@ namespace Pool
 {
     public static class Physics
     {
-        public static float FindPointCollisionWall(float first, float second, float wall)
+        static float FindPointCollisionWall(float first, float second, float wall)
         {
             bool a = first < second;
             for (int i = 0; i < 101; i++)
@@ -31,7 +30,7 @@ namespace Pool
         {
             float radius = GameScene.gameObjects[0].Transform.ScaledSize.x / 2;
 
-            // Do ball colisions
+            // Do ball collisions
             for (int i = 0; i < GameScene.gameObjects.Count; i++)
             {
                 GameObject ball1 = GameScene.gameObjects[i];
@@ -42,7 +41,7 @@ namespace Pool
 
                     if (CircleCollision(ball1.Center, ball2.Center, radius))
                     {
-                        int k = 0;
+                        int k;
                         Vector2 pos = ball1.Center;
                         Vector2 lastPos = ball1.Transform.LastPosition + new Vector2(radius);
 
@@ -62,8 +61,8 @@ namespace Pool
                                 break;
                             }
                         }
-                        Vector2 v1 = ball1.Transform.Velocity * ((100f - (float)k) / 100f) * App.FRAME_TIME;
-                        Vector2 v2 = ball2.Transform.Velocity * ((100f - (float)k) / 100f) * App.FRAME_TIME;
+                        Vector2 v1 = ball1.Transform.Velocity * ((100f - (float)k) / 100f) * App.PHYSICS_UPDATE;
+                        Vector2 v2 = ball2.Transform.Velocity * ((100f - (float)k) / 100f) * App.PHYSICS_UPDATE;
 
                         ball1.Transform.Position += v1;
                         ball2.Transform.Position += v2;
@@ -71,7 +70,7 @@ namespace Pool
                 }
             }
             
-
+            // Do wall collisions
             for (int i = 0; i < GameScene.gameObjects.Count; i++)
             {
                 GameObject go = GameScene.gameObjects[i];
@@ -79,10 +78,26 @@ namespace Pool
                 for (int j = 0; j < GameScene.lines.Count; j++)
                 {
                     Line wall = GameScene.lines[j];
-                    if (CheckLineCircle(wall.pos1, wall.pos2, go.Transform.Position, go.Transform.ScaledSize.x / 2))
+                    if (CheckLineCircle(wall.pos1, wall.pos2, go.Transform.Position, radius))
                     {
-                        PerformLineCircleCollision(go, wall);
-                        Console.WriteLine("Collision between nr. " + i + "and wall nr. " + j);
+                        int k;
+                        Vector2 pos = go.Transform.Position;
+                        Vector2 lastPos = go.Transform.LastPosition;
+
+                        for (k = 0; k < 51; k++)
+                        {
+                            Vector2 betweenPos = JMath.Lerp(lastPos, pos, (float)k / 50f);
+
+                            if (CheckLineCircle(wall.pos1, wall.pos2, betweenPos, radius))
+                            {
+                                go.Transform.Position = betweenPos;
+                                PerformLineCircleCollision(go, wall);
+                                break;
+                            }
+                        }
+                        Vector2 v1 = go.Transform.Velocity * ((100f - (float)k) / 100f) * App.PHYSICS_UPDATE;
+
+                        go.Transform.Position += v1;
                     }
                 }
             }
@@ -157,8 +172,35 @@ namespace Pool
         }
 
         // LINE/CIRCLE
-        private static bool CheckLineCircle(Vector2 v1, Vector2 v2, Vector2 circle, float r)
+        public static bool CheckLineCircle(Vector2 v1, Vector2 v2, Vector2 circle, float r)
         {
+            float minX, maxX, minY, maxY;
+            if (v1.x < v2.x)
+            {
+                minX = v1.x;
+                maxX = v2.x;
+            }
+            else
+            {
+                minX = v2.x;
+                maxX = v1.x;
+            }
+            if (v1.y < v2.y)
+            {
+                minY = v1.y;
+                maxY = v2.y;
+            }
+            else
+            {
+                minY = v2.y;
+                maxY = v1.y;
+            }
+            
+            if (circle.x + 2 * r < minX) return false;
+            if (circle.x > maxX) return false;
+            if (circle.y + 2 * r < minY) return false;
+            if (circle.y > maxY) return false;
+
             circle += new Vector2(13.5f);
 
             // is either end INSIDE the circle?
@@ -196,7 +238,6 @@ namespace Pool
             return false;
         }
 
-
         // POINT/CIRCLE
         private static bool PointCircle(Vector2 point, Vector2 circle, float r)
         {
@@ -215,7 +256,6 @@ namespace Pool
             }
             return false;
         }
-
 
         // LINE/POINT
         private static bool LinePoint(Vector2 v1, Vector2 v2, Vector2 point)

@@ -47,7 +47,7 @@ namespace Utility
 
         public Vector2 Normalize()
         {
-            float len = GetLength();// / 10;
+            float len = GetLength();
 
             if (len != 0)
             {

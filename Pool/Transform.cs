@@ -7,7 +7,7 @@ namespace Pool
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
         public Vector2 Scale { get; set; }
-        public Vector2 ScaledSize => Size * Scale;
+        public Vector2 ScaledSize;
         public float Rotation { get; set; }
         public Vector2 Velocity { get; set; } = Vector2.zero;
         public Vector2 LastPosition { get; set; }
@@ -20,6 +20,7 @@ namespace Pool
             Scale = scale;
             Size = size;
             Rotation = rotation;
+            ScaledSize = Size * Scale;
         }
 
         public Transform(Vector2 position, Vector2 size)
@@ -28,6 +29,7 @@ namespace Pool
             Scale = Vector2.one;
             Size = size;
             Rotation = 0;
+            ScaledSize = Size * Scale;
         }
         public Transform()
         {
@@ -35,14 +37,15 @@ namespace Pool
             Scale = Vector2.one;
             Size = Vector2.one;
             Rotation = 0;
+            ScaledSize = Size * Scale;
         }
 
         public void Update()
         {
             LastPosition = Position;
-            Position += Velocity * App.FRAME_TIME;
+            Position += Velocity * App.PHYSICS_UPDATE;
 
-            Velocity -= Velocity * frictionCOF * App.FRAME_TIME;
+            Velocity -= Velocity * frictionCOF * App.PHYSICS_UPDATE;
 
             if (Velocity != Vector2.zero)
             {

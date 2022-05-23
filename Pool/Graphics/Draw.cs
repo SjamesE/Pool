@@ -7,7 +7,10 @@ namespace Pool.Graphics
 {
     public class Draw
     {
-        private static Color[,] LineArr;
+        private static Color[,] LineArr = new Color[Window.WINDOW_WIDTH, Window.WINDOW_HEIGHT];
+        private static Image image = new Image(LineArr);
+        private static List<Vector2i> pixelsToClear = new List<Vector2i>();
+        public static Vector2 predictionCircle = new Vector2(-100);
 
         static Draw()
         {
@@ -16,59 +19,52 @@ namespace Pool.Graphics
 
         public static void Update()
         {
-            foreach (var gameObject in GameScene.gameObjects)
-            {
-                if (gameObject.Transform.Velocity.GetLength() != 0)
-                {
-                    Line((Vector2i)(gameObject.Transform.Position + gameObject.Transform.ScaledSize / 2),
-                         (Vector2i)(gameObject.Transform.Position + gameObject.Transform.ScaledSize / 2 + gameObject.Transform.Velocity * App.FRAME_TIME * 5),
-                         Color.Red);
-                }
-            }
+            // Draw Velocities
+            //foreach (var gameObject in GameScene.gameObjects)
+            //{
+            //    if (gameObject.Transform.Velocity.GetLength() != 0)
+            //    {
+            //        Line((Vector2i)(gameObject.Transform.Position + gameObject.Transform.ScaledSize / 2),
+            //             (Vector2i)(gameObject.Transform.Position + gameObject.Transform.ScaledSize / 2 + gameObject.Transform.Velocity * App.FRAME_TIME * 5),
+            //             Color.Red);
+            //    }
+            //}
 
-            Vector2[] holes = new Vector2[6]
-            {
-                new Vector2(39, 39),
-                new Vector2(Window.WINDOW_WIDTH / 2, 39),
-                new Vector2(Window.WINDOW_WIDTH - 41, 39),
-                new Vector2(39, Window.WINDOW_HEIGHT - 41),
-                new Vector2(Window.WINDOW_WIDTH / 2, Window.WINDOW_HEIGHT - 41),
-                new Vector2(Window.WINDOW_WIDTH - 41, Window.WINDOW_HEIGHT - 41)
-            };
-
-            foreach (var line in GameScene.lines)
-            {
-                Line((Vector2i)line.pos1, (Vector2i)line.pos2, Color.Black);
-                Vector2i middlePoint = (Vector2i)JMath.Lerp(line.pos1, line.pos2, .5f);
-                Line(middlePoint, middlePoint + (Vector2i)line.normal, Color.Red);
-            }
+            // Draw Lines
+            //foreach (var line in GameScene.lines)
+            //{
+            //    Line((Vector2i)line.pos1, (Vector2i)line.pos2, Color.Black);
+            //    Vector2i middlePoint = (Vector2i)JMath.Lerp(line.pos1, line.pos2, .5f);
+            //    Line(middlePoint, middlePoint + (Vector2i)line.normal, Color.Red);
+            //}
             
-
+            // Clear Screen
             Window.RenderWindow.Clear(new Color(80, 80, 80));
 
+            // Draw Table
             Sprite table = new Sprite(Assets.Textures.Table);
             Window.RenderWindow.Draw(table);
 
+            // Draw Objects
             foreach (var gameObject in GameScene.gameObjects)
             {
                 Window.RenderWindow.Draw(gameObject.Sprite);
             }
 
-            Image image = new Image(LineArr);
+            // Draw Lines
             Texture texture = new Texture(image);
             Sprite sprite = new Sprite(texture);
             Window.RenderWindow.Draw(sprite);
 
-            CircleShape circle;
-            foreach (var hole in holes)
+            if (predictionCircle != new Vector2(-100))
             {
-                circle = new CircleShape(18);
-                circle.FillColor = new Color(10, 10, 10);
+                float radius = GameScene.gameObjects[0].Transform.ScaledSize.x / 2 - 2;
+                CircleShape circle;
+                circle = new CircleShape(radius);
+                circle.FillColor = new Color();
                 circle.OutlineThickness = 2;
-                circle.OutlineColor = new Color(80, 80, 80);
-                circle.Position = (SFML.System.Vector2f)hole - new SFML.System.Vector2f(17, 17);
-                //LineArr[(int)circle.Position.X, (int)circle.Position.Y] = Color.White;
-                //LineArr[(int)circle.Position.X + 34, (int)circle.Position.Y + 34] = Color.White;
+                circle.OutlineColor = Color.White;
+                circle.Position = (SFML.System.Vector2f)predictionCircle - new SFML.System.Vector2f(radius, radius);
 
                 Window.RenderWindow.Draw(circle);
             }
@@ -76,7 +72,16 @@ namespace Pool.Graphics
             Window.RenderWindow.Display();
 
             texture.Dispose();
-            LineArr = new Color[Window.WINDOW_WIDTH, Window.WINDOW_HEIGHT];
+            ClearImage();
+        }
+
+        private static void ClearImage()
+        {
+            foreach (Vector2i v in pixelsToClear)
+            {
+                image.SetPixel((uint)v.x, (uint)v.y, new Color());
+            }
+            pixelsToClear.Clear();
         }
 
         public static void Line(Vector2i pos1, Vector2i pos2, Color color)
@@ -106,7 +111,9 @@ namespace Pool.Graphics
                     if (x > Window.WINDOW_WIDTH - 1 || y > Window.WINDOW_HEIGHT - 1) continue;
                     if (x < 0 || y < 0) continue;
 
-                    LineArr[x, y] = color;
+                    //LineArr[x, y] = color;
+                    image.SetPixel((uint)x, (uint)y, color);
+                    pixelsToClear.Add(new Vector2i(x, y));
                 }
                 else
                 {
@@ -116,7 +123,8 @@ namespace Pool.Graphics
                     if (x > Window.WINDOW_WIDTH - 1 || y > Window.WINDOW_HEIGHT - 1) continue;
                     if (x < 0 || y < 0) continue;
 
-                    LineArr[x, y] = color;
+                    image.SetPixel((uint)x, (uint)y, color);
+                    pixelsToClear.Add(new Vector2i(x, y));
                 }
             }
         }

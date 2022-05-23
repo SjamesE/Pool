@@ -23,8 +23,8 @@ namespace Pool
             }
         }
 
-        public Vector2 Center => new Vector2(Transform.Position.x + (Transform.Size.x * Transform.Scale.x / 2),
-                                             Transform.Position.y + (Transform.Size.y * Transform.Scale.y / 2));
+        public Vector2 Center => new Vector2(Transform.Position.x + (Transform.ScaledSize.x / 2),
+                                             Transform.Position.y + (Transform.ScaledSize.y / 2));
 
         public float Top => Transform.Position.y;
 

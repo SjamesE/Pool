@@ -11,3 +11,6 @@ dotnet_diagnostic.CS0660.severity = none
 
 # CS0661: Type defines operator == or operator != but does not override Object.GetHashCode()
 dotnet_diagnostic.CS0661.severity = none
+
+# CS8625: Cannot convert null literal to non-nullable reference type.
+dotnet_diagnostic.CS8625.severity = none
