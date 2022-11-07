@@ -42,46 +42,25 @@ namespace Pool
             {
                 Vector2 pos = Center + dragVector * k;
 
-                for (int i = 1; i < GameScene.gameObjects.Count; i++)
+                object? obj = Physics.CheckAllColistions(pos, ignore: GameScene.gameObjects[0]);
+                if (obj != null)
                 {
-                    GameObject go = GameScene.gameObjects[i];
-                    if (Physics.CircleCollision(pos, go.Center, radius))
+                    var a = obj.GetType();
+                    if (obj.GetType() == typeof(GameObject))
                     {
-                        hasCollided = true;
-                        collisionPos = pos;
+                        GameObject go = (GameObject)obj;
                         otherBall = go.Center;
-                        break;
                     }
+                    hasCollided = true;
+                    collisionPos = pos;
                 }
-                if (hasCollided) break;
 
-                foreach (var wall in GameScene.lines)
-                {
-                    if (Physics.CheckLineCircle(wall.pos1, wall.pos2, pos - new Vector2(radius), radius))
-                    {
-                        hasCollided = true;
-                        collisionPos = pos;
-                        break;
-                    }
-                }
-                if (hasCollided) break;
-
-                foreach (var hole in GameScene.holes)
-                {
-                    if (Physics.CircleCollision(pos, hole + new Vector2(26), 13 + radius / 2))
-                    {
-                        hasCollided = true;
-                        collisionPos = pos;
-                        break;
-                    }
-                }
-                
                 k++;
                 
                 if (k == 10000)
                 {
-                    break;
-                    //throw new Exception("how??ㅠㅠ");
+                    //break;
+                    throw new Exception("how??ㅠㅠ");
                 }
             }
 
@@ -142,10 +121,12 @@ namespace Pool
 
             if (Input.GetMouseState(1) == Input.KeyState.downFrame0)
             {
+                //Physics.CircleCollision((Vector2)Input.GetMousePos() - new Vector2(Transform.ScaledSize.x / 2))
                 Transform.Position = (Vector2)Input.GetMousePos() - new Vector2(Transform.ScaledSize.x / 2);
                 Transform.LastPosition = Transform.Position;
                 Transform.Velocity = Vector2.zero;
                 Draw.predictionCircle = new Vector2(-100);
+                Active = true;
             }
         }
     }

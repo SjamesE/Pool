@@ -48,7 +48,8 @@ namespace Pool.Graphics
             // Draw Objects
             foreach (var gameObject in GameScene.gameObjects)
             {
-                Window.RenderWindow.Draw(gameObject.Sprite);
+                if (gameObject.Active)
+                    Window.RenderWindow.Draw(gameObject.Sprite);
             }
 
             // Draw Lines

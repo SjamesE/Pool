@@ -22,7 +22,7 @@ namespace Pool
                 return sprite;
             }
         }
-
+        public bool Active { get; set; }
         public Vector2 Center => new Vector2(Transform.Position.x + (Transform.ScaledSize.x / 2),
                                              Transform.Position.y + (Transform.ScaledSize.y / 2));
 
@@ -49,6 +49,7 @@ namespace Pool
             Texture = texture;
 
             Transform.Size = new Vector2(Texture.Size);
+            Active = true;
         }
 
         public void Update()

@@ -105,13 +105,14 @@ namespace Pool.Scenes
             for (int i = 0; i < gameObjects.Count; i++)
             {
                 GameObject go = gameObjects[i];
+                if (!go.Active) continue;
+
                 go.Update();
                 foreach (var hole in holes)
                 {
                     if (Physics.CircleCollision(go.Center, hole + new Vector2(26), 13))
                     {
-                        go.Transform.Position = new Vector2(-100, -100);
-                        go.Transform.Velocity = Vector2.zero;
+                        go.Active = false;
                     }
                 }
             }

@@ -6,6 +6,7 @@ namespace Pool
 {
     public static class Physics
     {
+        static float radius = GameScene.gameObjects[0].Transform.ScaledSize.x / 2;
         static float FindPointCollisionWall(float first, float second, float wall)
         {
             bool a = first < second;
@@ -28,29 +29,32 @@ namespace Pool
 
         public static void Update()
         {
-            float radius = GameScene.gameObjects[0].Transform.ScaledSize.x / 2;
-
             // Do ball collisions
             for (int i = 0; i < GameScene.gameObjects.Count; i++)
             {
                 GameObject ball1 = GameScene.gameObjects[i];
+                if (!ball1.Active) continue;
+
                 for (int j = i + 1; j < GameScene.gameObjects.Count; j++)
                 {
                     //Console.WriteLine($"Last Pos: {ball1.Transform.LastPosition}, Curr Pos: {ball1.Transform.Position}");
                     GameObject ball2 = GameScene.gameObjects[j];
+                    if (!ball2.Active) continue;
 
                     if (CircleCollision(ball1.Center, ball2.Center, radius))
                     {
+                        // TODO: Replace this with a binary search to find the collision quicker
+
                         int k;
-                        Vector2 pos = ball1.Center;
+                        Vector2 pos     = ball1.Center;
                         Vector2 lastPos = ball1.Transform.LastPosition + new Vector2(radius);
 
-                        Vector2 pos2 = ball2.Center;
+                        Vector2 pos2     = ball2.Center;
                         Vector2 lastPos2 = ball2.Transform.LastPosition + new Vector2(radius);
 
                         for (k = 0; k < 51; k++)
                         {
-                            Vector2 betweenPos = JMath.Lerp(lastPos, pos, (float)k / 50f);
+                            Vector2 betweenPos  = JMath.Lerp(lastPos,  pos,  (float)k / 50f);
                             Vector2 betweenPos2 = JMath.Lerp(lastPos2, pos2, (float)k / 50f);
 
                             if (CircleCollision(betweenPos, betweenPos2, radius))
@@ -74,12 +78,16 @@ namespace Pool
             for (int i = 0; i < GameScene.gameObjects.Count; i++)
             {
                 GameObject go = GameScene.gameObjects[i];
+                if (!go.Active) continue;
 
                 for (int j = 0; j < GameScene.lines.Count; j++)
                 {
                     Line wall = GameScene.lines[j];
-                    if (CheckLineCircle(wall.pos1, wall.pos2, go.Transform.Position, radius))
+
+                    if (CheckLineCircle(wall, go.Transform.Position, radius))
                     {
+                        // TODO: Replace this with a binary search to find the collision quicker
+
                         int k;
                         Vector2 pos = go.Transform.Position;
                         Vector2 lastPos = go.Transform.LastPosition;
@@ -88,7 +96,7 @@ namespace Pool
                         {
                             Vector2 betweenPos = JMath.Lerp(lastPos, pos, (float)k / 50f);
 
-                            if (CheckLineCircle(wall.pos1, wall.pos2, betweenPos, radius))
+                            if (CheckLineCircle(wall, betweenPos, radius))
                             {
                                 go.Transform.Position = betweenPos;
                                 PerformLineCircleCollision(go, wall);
@@ -114,22 +122,14 @@ namespace Pool
             float d = JMath.Pythagoras(delta.x, delta.y);
 
             Vector2 mtd;
-            if (d != 0.0f)
-            {
-                mtd = delta * (radius + radius - d) / d; // minimum translation distance to push balls apart after intersecting
-
-            }
-            else // Special case. Balls are exactly on top of eachother.  Don't want to divide by zero.
+            if (d == 0.0f) // Special case. Balls are exactly on top of eachother.  Don't want to divide by zero.
             {
                 d = radius + radius - 1.0f;
                 delta = new Vector2(radius + radius, 0.0f);
-
-                mtd = delta * (radius + radius - d) / d;
             }
+            mtd = delta * (radius + radius - d) / d;
 
             // resolve intersection
-            float im1 = 1; // inverse mass quantities
-            float im2 = 1;
 
             // push-pull them apart
             ball1.Transform.Position += mtd / 2;
@@ -144,12 +144,12 @@ namespace Pool
             if (vn > 0.0f) return;
 
             // collision impulse
-            float i = (-(1.0f + .985f) * vn) / (im1 + im2);
+            float i = (-(1.0f + .985f) * vn) / 2;
             Vector2 impulse = mtd * i;
 
-            // change in momentum
-            ball1.Transform.Velocity += impulse * im1 * collisionCoef;
-            ball2.Transform.Velocity -= impulse * im2 * collisionCoef;
+            // change velocity
+            ball1.Transform.Velocity += impulse * collisionCoef;
+            ball2.Transform.Velocity -= impulse * collisionCoef;
         }
 
         private static void PerformLineCircleCollision(GameObject ball, Line line)
@@ -172,29 +172,15 @@ namespace Pool
         }
 
         // LINE/CIRCLE
-        public static bool CheckLineCircle(Vector2 v1, Vector2 v2, Vector2 circle, float r)
+        public static bool CheckLineCircle(Line line, Vector2 circle, float r)
         {
             float minX, maxX, minY, maxY;
-            if (v1.x < v2.x)
-            {
-                minX = v1.x;
-                maxX = v2.x;
-            }
-            else
-            {
-                minX = v2.x;
-                maxX = v1.x;
-            }
-            if (v1.y < v2.y)
-            {
-                minY = v1.y;
-                maxY = v2.y;
-            }
-            else
-            {
-                minY = v2.y;
-                maxY = v1.y;
-            }
+
+            minX = Math.Min(line.pos1.x, line.pos2.x);
+            maxX = Math.Max(line.pos1.x, line.pos2.x);
+            
+            minY = Math.Min(line.pos1.y, line.pos2.y);
+            maxY = Math.Max(line.pos1.y, line.pos2.y);
             
             if (circle.x + 2 * r < minX) return false;
             if (circle.x > maxX) return false;
@@ -205,25 +191,25 @@ namespace Pool
 
             // is either end INSIDE the circle?
             // if so, return true immediately
-            bool inside1 = PointCircle(v1, circle, r);
-            bool inside2 = PointCircle(v2, circle, r);
+            bool inside1 = PointInsideCircle(line.pos1, circle, r);
+            bool inside2 = PointInsideCircle(line.pos2, circle, r);
             if (inside1 || inside2) return true;
 
             // get length of the line
-            float distX = v1.x - v2.x;
-            float distY = v1.y - v2.y;
+            float distX = line.pos1.x - line.pos2.x;
+            float distY = line.pos1.y - line.pos2.y;
             float len = (float)Math.Sqrt((distX * distX) + (distY * distY));
 
             // get dot product of the line and circle
-            float dot = (float)((((circle.x - v1.x) * (v2.x - v1.x)) + ((circle.y - v1.y) * (v2.y - v1.y))) / Math.Pow(len, 2));
+            float dot = (float)((((circle.x - line.pos1.x) * (line.pos2.x - line.pos1.x)) + ((circle.y - line.pos1.y) * (line.pos2.y - line.pos1.y))) / Math.Pow(len, 2));
 
             // find the closest point on the line
-            Vector2 closest = new Vector2(v1.x + (dot * (v2.x - v1.x)),
-                                          v1.y + (dot * (v2.y - v1.y)));
+            Vector2 closest = new Vector2(line.pos1.x + (dot * (line.pos2.x - line.pos1.x)),
+                                          line.pos1.y + (dot * (line.pos2.y - line.pos1.y)));
 
             // is this point actually on the line segment?
             // if so keep going, but if not, return false
-            bool onSegment = LinePoint(v1, v2, closest);
+            bool onSegment = PointOnLine(line.pos1, line.pos2, closest);
             if (!onSegment) return false;
 
             // get distance to closest point
@@ -239,9 +225,8 @@ namespace Pool
         }
 
         // POINT/CIRCLE
-        private static bool PointCircle(Vector2 point, Vector2 circle, float r)
+        private static bool PointInsideCircle(Vector2 point, Vector2 circle, float r)
         {
-
             // get distance between the point and circle's center
             // using the point.ythagorean Theorem
             float distX = point.x - circle.x;
@@ -258,7 +243,7 @@ namespace Pool
         }
 
         // LINE/POINT
-        private static bool LinePoint(Vector2 v1, Vector2 v2, Vector2 point)
+        private static bool PointOnLine(Vector2 v1, Vector2 v2, Vector2 point)
         {
 
             // get distance from the point to the two ends of the line
@@ -270,17 +255,43 @@ namespace Pool
 
             // since floats are so minutely accurate, add
             // a little buffer zone that will give collision
-            float buffer = 0.1f;    // higher # = less accurate
+            float buffer = 0.01f;    // higher = less accurate
 
             // if the two distances are equal to the line's
             // length, the point is on the line!
             // note we use the buffer here to give a range,
-            // rather than one #
+            // rather than one 
             if (d1 + d2 >= lineLen - buffer && d1 + d2 <= lineLen + buffer)
             {
                 return true;
             }
             return false;
+        }
+
+        public static object? CheckAllColistions(Vector2 pos, float r = -1, object? ignore = null)
+        {
+            if (r == -1) r = radius;
+
+            foreach (var ball in GameScene.gameObjects)
+            {
+                if (!ball.Active) continue;
+                if (CircleCollision(pos, ball.Center, r))
+                    if (ignore == null || ignore != null && ignore != (object)ball) return ball;
+            }
+
+            foreach (var hole in GameScene.holes)
+            {
+                if (CircleCollision(pos, hole + new Vector2(26), 13 + r / 2))
+                    if (ignore == null || ignore != null && ignore != (object)hole) return hole;
+            }
+
+            foreach (var line in GameScene.lines)
+            {
+                if (CheckLineCircle(line, pos - new Vector2(r), r))
+                    if (ignore == null || ignore != null && ignore != (object)line) return line;
+            }
+
+            return null;
         }
     }
 }
