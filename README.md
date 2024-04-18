@@ -1,1 +1,1 @@
-Pool Game with really bad, but working Continuous collision detection (CCD)
+Pool Game with pretty bad, but working Continuous collision detection (CCD)
