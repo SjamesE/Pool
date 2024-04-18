@@ -5,10 +5,8 @@ namespace Pool
     public class App
     {
         public static readonly int TARGET_FPS = 144;
-        public static readonly float FRAME_TIME = 1f / TARGET_FPS;
-        public static readonly float PHYSICS_UPDATE = 0.0005f;
-
-        private Window window = new Window();
+        public static readonly float FRAME_TIME = 1f / TARGET_FPS * 0.99f;
+        public static readonly float PHYSICS_UPDATE = 0.001f;
 
         /// <summary>
         /// App core loop
@@ -33,10 +31,10 @@ namespace Pool
                 {
                     timeTillPhysicsUpdate = PHYSICS_UPDATE;
                     PhysicsUpdate();
-                    if (Time.deltaTime > timeTillPhysicsUpdate)
-                    {
-                        Console.WriteLine("oof");
-                    }
+                    //if (Time.deltaTime > timeTillPhysicsUpdate)
+                    //{
+                    //    Console.WriteLine("Physics update timer exceeded.");
+                    //}
                 }
                 else timeTillPhysicsUpdate -= Time.deltaTime;
             }

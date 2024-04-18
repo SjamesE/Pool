@@ -14,7 +14,6 @@ namespace Pool
             this.pos2 = pos2;
 
             normal = new Vector2((pos2.y - pos1.y) * -1, pos2.x - pos1.x).Normalize() * 10;
-            //Console.WriteLine(normal);
         }
     }
 }

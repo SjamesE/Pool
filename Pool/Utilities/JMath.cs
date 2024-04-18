@@ -1,4 +1,5 @@
-﻿using Utility;
+﻿using System.Collections.Generic;
+using Utility;
 
 namespace Pool.Utilities
 {
@@ -19,6 +20,14 @@ namespace Pool.Utilities
         public static float Pythagoras(float first, float second)
         {
             return (float)Math.Sqrt(first * first + second * second);
+        }
+
+        public static float Pythagoras(Vector2 first, Vector2 second)
+        {
+            var distX = first.x - second.x;
+            var distY = first.y - second.y;
+
+            return (float)Math.Sqrt(distX * distX + distY * distY);
         }
 
         public static float Sin(float value)

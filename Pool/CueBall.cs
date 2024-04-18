@@ -1,5 +1,6 @@
 ﻿using Pool.Graphics;
 using Pool.Scenes;
+using Pool.Utilities;
 using SFML.Graphics;
 using Utility;
 
@@ -27,51 +28,52 @@ namespace Pool
         private void UpdateDrag()
         {
             Vector2i mousePos = Input.GetMousePos();
+
+            // Draw line from mouse to cue ball
             Draw.Line(mousePos, (Vector2i)Center, Color.White);
 
             if ((Vector2)mousePos == Center) return;
-
             Vector2 dragVector = (Center - (Vector2)mousePos).Normalize();
-            int k = 0;
-            bool hasCollided = false;
-            Vector2 otherBall = new Vector2(-1);
-            float radius = Transform.ScaledSize.x / 2;
-            Vector2 collisionPos = new Vector2();
 
-            while (!hasCollided) 
+            // Shoot raycast
+            var rayHit = Physics.RayMarch(Center, dragVector);
+
+            if (rayHit.hasHit)
             {
-                Vector2 pos = Center + dragVector * k;
+                // Set prediction circle position
+                Draw.predictionCircle = rayHit.point!;
 
-                object? obj = Physics.CheckAllColistions(pos, ignore: GameScene.gameObjects[0]);
-                if (obj != null)
+                Vector2i trajectoryLineOrigin = (Vector2i)rayHit.origin;
+                if (rayHit.hasHit && rayHit.distance > 30)
+                    trajectoryLineOrigin += (Vector2i)(rayHit.rayDir * 25f);
+
+                // If ray hit another ball
+                if (rayHit.other != null)
                 {
-                    var a = obj.GetType();
-                    if (obj.GetType() == typeof(GameObject))
-                    {
-                        GameObject go = (GameObject)obj;
-                        otherBall = go.Center;
-                    }
-                    hasCollided = true;
-                    collisionPos = pos;
-                }
+                    // Get the dot product between the hit normal and the ray dir
+                    // to scale the prediction line based on the hit angle. (Result between 0 and 1)
+                    float predictionScale = -rayHit.hitNormal.Dot((rayHit.origin - rayHit.point).Normalize());
+                    // scale and clamp
+                    predictionScale = Math.Clamp(predictionScale * 50f, 10f, 50f);
 
-                k++;
-                
-                if (k == 10000)
+                    // Draw other ball direction prediction line
+                    Draw.Line((Vector2i) rayHit.other.Center,
+                              (Vector2i)(rayHit.other.Center + rayHit.hitNormal * predictionScale),
+                              Color.White);
+
+
+                    // Draw line from the center of the cue ball to the collision position
+                    Draw.Line((Vector2i)rayHit.point,
+                              trajectoryLineOrigin,
+                              Color.White);
+                }
+                else // If ray hit a line or a hole
                 {
-                    //break;
-                    throw new Exception("how??ㅠㅠ");
+                    // Draw line from the center of the cue ball to the collision position
+                    Draw.Line((Vector2i)rayHit.point,
+                              trajectoryLineOrigin,
+                              Color.White);
                 }
-            }
-
-            Draw.predictionCircle = collisionPos;
-            Draw.Line((Vector2i)Center, (Vector2i)collisionPos, Color.White);
-
-            if (otherBall != new Vector2(-1))
-            {
-                Vector2 vector = otherBall - collisionPos;
-
-                Draw.Line((Vector2i)otherBall, (Vector2i)(otherBall + vector), Color.White);
             }
         }
         
@@ -87,6 +89,7 @@ namespace Pool
 
         public new void Update()
         {
+            // Check input
             if (Input.GetMouseState(0) == Input.KeyState.downFrame0)
             {
                 var hit = GameScene.Raycast((Vector2)Input.GetMousePos());
@@ -121,7 +124,6 @@ namespace Pool
 
             if (Input.GetMouseState(1) == Input.KeyState.downFrame0)
             {
-                //Physics.CircleCollision((Vector2)Input.GetMousePos() - new Vector2(Transform.ScaledSize.x / 2))
                 Transform.Position = (Vector2)Input.GetMousePos() - new Vector2(Transform.ScaledSize.x / 2);
                 Transform.LastPosition = Transform.Position;
                 Transform.Velocity = Vector2.zero;

@@ -13,7 +13,7 @@ namespace Pool.Scenes
 
         public GameScene()
         {
-            Vector2 size = new Vector2(Textures.BlackBall.Size);
+            Vector2 size = new Vector2(Textures.RedBall.Size);
             Vector2 scale = new Vector2(0.421875f);
             float w = scale.x * size.x;
             float y = w / 2f;
@@ -23,24 +23,25 @@ namespace Pool.Scenes
             int tblW = (int)Window.WINDOW_WIDTH - 66;
             int tblH = (int)Window.WINDOW_HEIGHT - 68;
 
-            cueBall = new CueBall("CueBall", new Transform(new Vector2((tblW - 30) / 4 + 30, Window.WINDOW_HEIGHT / 2), new Vector2(Textures.BlackBall.Size), scale), Textures.WhiteBall);
+            cueBall = new CueBall("CueBall", new Transform(new Vector2((tblW - 30) / 4 + 30, Window.WINDOW_HEIGHT / 2), new Vector2(Textures.RedBall.Size), scale), Textures.WhiteBall);
             gameObjects.Add(cueBall);
 
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f,         Window.WINDOW_HEIGHT / 2        ), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f +     x, Window.WINDOW_HEIGHT / 2 -     y), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f +     x, Window.WINDOW_HEIGHT / 2 +     y), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 2 * x, Window.WINDOW_HEIGHT / 2 - 2 * y), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 2 * x, Window.WINDOW_HEIGHT / 2        ), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 2 * x, Window.WINDOW_HEIGHT / 2 + 2 * y), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 3 * x, Window.WINDOW_HEIGHT / 2 - 3 * y), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 3 * x, Window.WINDOW_HEIGHT / 2 + 3 * y), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 3 * x, Window.WINDOW_HEIGHT / 2 -     y), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 3 * x, Window.WINDOW_HEIGHT / 2 +     y), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 4 * x, Window.WINDOW_HEIGHT / 2 - 4 * y), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 4 * x, Window.WINDOW_HEIGHT / 2 - 2 * y), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 4 * x, Window.WINDOW_HEIGHT / 2        ), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 4 * x, Window.WINDOW_HEIGHT / 2 + 2 * y), size, scale), Textures.BlackBall);
-            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 4 * x, Window.WINDOW_HEIGHT / 2 + 4 * y), size, scale), Textures.BlackBall);
+            // Red balls
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f,         Window.WINDOW_HEIGHT / 2        ), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f +     x, Window.WINDOW_HEIGHT / 2 -     y), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f +     x, Window.WINDOW_HEIGHT / 2 +     y), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 2 * x, Window.WINDOW_HEIGHT / 2 - 2 * y), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 2 * x, Window.WINDOW_HEIGHT / 2        ), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 2 * x, Window.WINDOW_HEIGHT / 2 + 2 * y), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 3 * x, Window.WINDOW_HEIGHT / 2 - 3 * y), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 3 * x, Window.WINDOW_HEIGHT / 2 + 3 * y), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 3 * x, Window.WINDOW_HEIGHT / 2 -     y), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 3 * x, Window.WINDOW_HEIGHT / 2 +     y), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 4 * x, Window.WINDOW_HEIGHT / 2 - 4 * y), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 4 * x, Window.WINDOW_HEIGHT / 2 - 2 * y), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 4 * x, Window.WINDOW_HEIGHT / 2        ), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 4 * x, Window.WINDOW_HEIGHT / 2 + 2 * y), size, scale), Textures.RedBall);
+            Instantiate(name, new Transform(new Vector2(tblW / 1.333f + 4 * x, Window.WINDOW_HEIGHT / 2 + 4 * y), size, scale), Textures.RedBall);
 
             // Top
             lines.Add(new Line(new Vector2(98, 67), 
@@ -119,6 +120,11 @@ namespace Pool.Scenes
             cueBall.Update();
         }
 
+        /// <summary>
+        /// Mouse raycast
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
         public static GameObject? Raycast(Vector2 position)
         {
             foreach (GameObject gameObject in gameObjects)
@@ -131,7 +137,7 @@ namespace Pool.Scenes
             return null;
         }
 
-        public GameObject? Find(string name)
+        public static GameObject? Find(string name)
         {
             foreach (var gameObject in gameObjects)
             {

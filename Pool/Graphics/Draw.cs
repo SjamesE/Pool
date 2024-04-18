@@ -7,55 +7,59 @@ namespace Pool.Graphics
 {
     public class Draw
     {
-        private static Color[,] LineArr = new Color[Window.WINDOW_WIDTH, Window.WINDOW_HEIGHT];
-        private static Image image = new Image(LineArr);
-        private static List<Vector2i> pixelsToClear = new List<Vector2i>();
+        private static List<Vertex> lineVertices = new List<Vertex>();
         public static Vector2 predictionCircle = new Vector2(-100);
+        private static RenderTexture rndTexture;
+
+        // lists for the debug circles
+        //public static List<float> circles = new();
+        //public static List<Vector2> circlesPos = new();
 
         static Draw()
         {
-            LineArr = new Color[Window.WINDOW_WIDTH, Window.WINDOW_HEIGHT];
+            rndTexture = new RenderTexture(Window.WINDOW_WIDTH, Window.WINDOW_HEIGHT);
+            //LineArr = new Color[Window.WINDOW_WIDTH, Window.WINDOW_HEIGHT];
         }
 
         public static void Update()
         {
+            /* DEBUG
             // Draw Velocities
-            //foreach (var gameObject in GameScene.gameObjects)
-            //{
-            //    if (gameObject.Transform.Velocity.GetLength() != 0)
-            //    {
-            //        Line((Vector2i)(gameObject.Transform.Position + gameObject.Transform.ScaledSize / 2),
-            //             (Vector2i)(gameObject.Transform.Position + gameObject.Transform.ScaledSize / 2 + gameObject.Transform.Velocity * App.FRAME_TIME * 5),
-            //             Color.Red);
-            //    }
-            //}
+            foreach (var gameObject in GameScene.gameObjects)
+            {
+                if (gameObject.Transform.Velocity.GetLength() != 0)
+                {
+                    Line((Vector2i)(gameObject.Transform.Position + gameObject.Transform.ScaledSize / 2),
+                         (Vector2i)(gameObject.Transform.Position + gameObject.Transform.ScaledSize / 2 + gameObject.Transform.Velocity * App.FRAME_TIME * 5),
+                         Color.Red);
+                }
+            }
 
-            // Draw Lines
-            //foreach (var line in GameScene.lines)
-            //{
-            //    Line((Vector2i)line.pos1, (Vector2i)line.pos2, Color.Black);
-            //    Vector2i middlePoint = (Vector2i)JMath.Lerp(line.pos1, line.pos2, .5f);
-            //    Line(middlePoint, middlePoint + (Vector2i)line.normal, Color.Red);
-            //}
-            
+            // Draw wall debug Lines
+            foreach (var line in GameScene.lines)
+            {
+                Line((Vector2i)line.pos1, (Vector2i)line.pos2, Color.Black);
+                Vector2i middlePoint = (Vector2i)JMath.Lerp(line.pos1, line.pos2, .5f);
+                Line(middlePoint, middlePoint + (Vector2i)line.normal, Color.Red);
+            }
+            */
+
             // Clear Screen
-            Window.RenderWindow.Clear(new Color(80, 80, 80));
+            rndTexture.Clear(new Color(80, 80, 80));
 
             // Draw Table
             Sprite table = new Sprite(Assets.Textures.Table);
-            Window.RenderWindow.Draw(table);
+            rndTexture.Draw(table);
 
             // Draw Objects
             foreach (var gameObject in GameScene.gameObjects)
             {
                 if (gameObject.Active)
-                    Window.RenderWindow.Draw(gameObject.Sprite);
+                    rndTexture.Draw(gameObject.Sprite);
             }
 
-            // Draw Lines
-            Texture texture = new Texture(image);
-            Sprite sprite = new Sprite(texture);
-            Window.RenderWindow.Draw(sprite);
+            rndTexture.Draw(lineVertices.ToArray(), PrimitiveType.Lines);
+
 
             if (predictionCircle != new Vector2(-100))
             {
@@ -67,67 +71,56 @@ namespace Pool.Graphics
                 circle.OutlineColor = Color.White;
                 circle.Position = (SFML.System.Vector2f)predictionCircle - new SFML.System.Vector2f(radius, radius);
 
-                Window.RenderWindow.Draw(circle);
+                rndTexture.Draw(circle);
             }
 
-            Window.RenderWindow.Display();
-
-            texture.Dispose();
-            ClearImage();
-        }
-
-        private static void ClearImage()
-        {
-            foreach (Vector2i v in pixelsToClear)
+            /* DEBUG
+            // Draw debug Ray March lines
+            for (int i = 0; i < circles.Count; i++)
             {
-                image.SetPixel((uint)v.x, (uint)v.y, new Color());
+                CircleShape circleShape = new CircleShape(circles[i]);
+                circleShape.FillColor = new Color();
+                circleShape.OutlineThickness = 1;
+                circleShape.OutlineColor = Color.White;
+                circleShape.Position = (SFML.System.Vector2f)circlesPos[i] - new SFML.System.Vector2f(circles[i], circles[i]);
+                circleShape.SetPointCount(circles[i] < 40 ? 20u : 40u);
+
+                rndTexture.Draw(circleShape);
             }
-            pixelsToClear.Clear();
+            circles = new();
+            circlesPos = new();
+
+            // Draw holes
+            foreach (var hole in GameScene.holes)
+            {
+                CircleShape circleShape = new CircleShape(26);
+                circleShape.FillColor = new Color();
+                circleShape.OutlineThickness = 1;
+                circleShape.OutlineColor = Color.Red;
+                circleShape.Position = (SFML.System.Vector2f)hole;
+
+                rndTexture.Draw(circleShape);
+            }
+            */
+
+            rndTexture.Display();
+
+            // Clear Screen
+            Window.RenderWindow.Clear(new Color(80, 80, 80));
+            lineVertices.Clear();
+
+            // Draw 
+            Sprite sprt = new Sprite(rndTexture.Texture);
+            Window.RenderWindow.Draw(sprt);
+
+            // Display
+            Window.RenderWindow.Display();
         }
 
         public static void Line(Vector2i pos1, Vector2i pos2, Color color)
         {
-            bool xdir = (pos1.x > pos2.x);
-            bool ydir = (pos1.y > pos2.y);
-
-            int w = Math.Abs(pos1.x - pos2.x);
-            int h = Math.Abs(pos1.y - pos2.y);
-
-            w = (w <= 1) ? 1 : w;
-            h = (h <= 1) ? 1 : h;
-
-            bool horizontal = w > h;
-            float d = (horizontal) ? (float)h / (float)w : (float)w / (float)h;
-            int   l = (horizontal) ? w : h;
-
-            for (int i = 0; i < l; i++)
-            {
-                int c = (int)Math.Round(i * d - .5f);
-
-                if (horizontal)
-                {
-                    int x = (xdir) ? pos1.x - i : pos1.x + i;
-                    int y = (ydir) ? pos1.y - c : pos1.y + c;
-
-                    if (x > Window.WINDOW_WIDTH - 1 || y > Window.WINDOW_HEIGHT - 1) continue;
-                    if (x < 0 || y < 0) continue;
-
-                    //LineArr[x, y] = color;
-                    image.SetPixel((uint)x, (uint)y, color);
-                    pixelsToClear.Add(new Vector2i(x, y));
-                }
-                else
-                {
-                    int x = (xdir) ? pos1.x - c : pos1.x + c;
-                    int y = (ydir) ? pos1.y - i : pos1.y + i;
-
-                    if (x > Window.WINDOW_WIDTH - 1 || y > Window.WINDOW_HEIGHT - 1) continue;
-                    if (x < 0 || y < 0) continue;
-
-                    image.SetPixel((uint)x, (uint)y, color);
-                    pixelsToClear.Add(new Vector2i(x, y));
-                }
-            }
+            lineVertices.Add(new Vertex((SFML.System.Vector2f)pos1, color));
+            lineVertices.Add(new Vertex((SFML.System.Vector2f)pos2, color));
         }
     }
 }
