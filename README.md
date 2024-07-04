@@ -1,1 +1,1 @@
-Pool Game with pretty bad, but working Continuous collision detection (CCD)
+Pool Game with (mostly) realistic physics
